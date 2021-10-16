@@ -10,13 +10,14 @@ import {
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRangePicker } from "react-date-range";
+import { useRouter } from "next/dist/client/router";
 
-function Header() {
+function Header({ placeholder }) {
   const [searchInput, setSearchInput] = useState("");
-
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [noOfGuests, setNoOfGuests] = useState(1);
+  const router = useRouter();
 
   const handleSelect = (ranges) => {
     setStartDate(ranges.selection.startDate);
@@ -25,6 +26,18 @@ function Header() {
 
   const resetInput = () => {
     setSearchInput("");
+  };
+
+  const search = () => {
+    router.push({
+      pathname: "/search",
+      query: {
+        location: searchInput,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        noOfGuests,
+      },
+    });
   };
 
   const selectionRange = {
@@ -37,7 +50,10 @@ function Header() {
     <header className="sticky top-0 z-50 grid grid-cols-3 bg-white shadow-md py-5 px-5 md:px-10">
       {/* left */}
 
-      <div className="relative flex items-center h-10 cursor-pointer my-auto">
+      <div
+        onClick={() => router.push("/")}
+        className="relative flex items-center h-10 cursor-pointer my-auto"
+      >
         <Image
           src="https://links.papareact.com/qd3"
           layout="fill"
@@ -59,7 +75,7 @@ function Header() {
            bg-transparent outline-none text-sm
            text-gray-600 placeholder-gray-400"
           type="text"
-          placeholder="ayoooooo"
+          placeholder={placeholder || "Ayoooooo"}
         />
         <SearchIcon
           className="hidden
@@ -103,9 +119,11 @@ function Header() {
           </div>
           <div className="flex">
             <button onClick={resetInput} className="flex-grow text-gray-500">
-             Thanos Snap
+              Thanos Snap
             </button>
-            <button className="flex-grow text-red-400">Look it up</button>
+            <button onClick={search} className="flex-grow text-red-400">
+              Look it up
+            </button>
           </div>
         </div>
       )}
